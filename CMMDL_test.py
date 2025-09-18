@@ -1,4 +1,4 @@
-from Net.CMMDL import CMMDL
+from Net.CMMDL_Network import CMMDL
 import os
 import torch
 import torch.nn as nn
@@ -142,3 +142,4 @@ def main():
 if __name__ == '__main__':
 
     main()
+
