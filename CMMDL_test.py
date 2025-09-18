@@ -69,8 +69,8 @@ def test(fusion_model, fused_dir, ori_image_folder):
     fusion_model = nn.DataParallel(CMMDL()).to(device)
     fusion_model.load_state_dict(torch.load(fusion_model_path, map_location='cuda:0'))
     fusion_model.eval()
-    IR_path = ori_image_folder + '/ir'
-    VIS_path = ori_image_folder + '/vi'
+    IR_path = ori_image_folder + '/infrared'
+    VIS_path = ori_image_folder + '/visible'
 
     test_dataset = Fusion_dataset('val', ir_path=IR_path, vi_path=VIS_path)
     test_loader = DataLoader(
@@ -114,8 +114,8 @@ def evaluate(eval_folder, ori_image_folder):
     headers = ['EN', 'SD', 'SF', 'MI', 'SCD', 'VIF', 'Qabf', 'SSIM', 'AG', 'MSE', 'CC', 'PSNR']
     metric_count = len(headers)
     for img_name in tqdm(image_list, desc='Processing Images'):
-        ir = image_read_cv2(os.path.join(ori_image_folder, "ir", img_name), 'GRAY')
-        vi = image_read_cv2(os.path.join(ori_image_folder, "vi", img_name), 'GRAY')
+        ir = image_read_cv2(os.path.join(ori_image_folder, "infrared", img_name), 'GRAY')
+        vi = image_read_cv2(os.path.join(ori_image_folder, "visible", img_name), 'GRAY')
         fi = image_read_cv2(os.path.join(eval_folder, img_name.split('.')[0] + ".png"), 'GRAY')
         metric_result += np.array([Evaluator.EN(fi), Evaluator.SD(fi)
                                       , Evaluator.SF(fi), Evaluator.MI(fi, ir, vi)
@@ -132,12 +132,13 @@ def evaluate(eval_folder, ori_image_folder):
     print("=" * (len(header_row) + metric_count))
 
 def main():
-    fusion_model_path = 'H:\CMMDL\Model\CMMDL_model_Best.pth'
+    fusion_model_path = './Model/CMMDL_model_finally.pth'
     fused_dir = './result'
-    ori_image_folder = 'F:\CMMDL\Test_Data\TNO'
+    ori_image_folder = './test_cases/'
     os.makedirs(fused_dir, mode=0o777, exist_ok=True)
     test(fusion_model_path, fused_dir, ori_image_folder)
     evaluate(fused_dir, ori_image_folder)
 
 if __name__ == '__main__':
+
     main()
